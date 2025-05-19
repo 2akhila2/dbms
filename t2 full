@@ -1,0 +1,135 @@
+user@user-HP-280-G3-MT:~$ sqlplus sys as sysdba
+
+SQL*Plus: Release 11.2.0.2.0 Production on Mon May 19 14:32:38 2025
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password: 
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> set serveroutput on
+SQL> create user p1 identified bt 12345;
+create user p1 identified bt 12345
+                          *
+ERROR at line 1:
+ORA-00924: missing BY keyword
+
+
+SQL> create user p1 identified by 12345;
+create user p1 identified by 12345
+            *
+ERROR at line 1:
+ORA-01920: user name 'P1' conflicts with another user or role name
+
+
+SQL> grant all privileges to p1;
+
+Grant succeeded.
+
+SQL> exit;
+Disconnected from Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+user@user-HP-280-G3-MT:~$ sqlplus p1 as sysdba
+
+SQL*Plus: Release 11.2.0.2.0 Production on Mon May 19 14:35:43 2025
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password: 
+ERROR:
+ORA-01031: insufficient privileges
+
+
+Enter user-name: p1
+Enter password: 
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> create table purchase(id int,item int,noofitem int,price int);
+
+Table created.
+
+SQL> insert into purchase values(101,'book',30);
+insert into purchase values(101,'book',30)
+            *
+ERROR at line 1:
+ORA-00947: not enough values
+
+
+SQL> insert into purchase values(101,'book',3,30);    
+insert into purchase values(101,'book',3,30)
+                                *
+ERROR at line 1:
+ORA-01722: invalid number
+
+
+SQL> drop table purchase;
+
+Table dropped.
+
+SQL> create table purchase(id int,item varchar(20),noofitem int,price int);
+
+Table created.
+
+SQL> desc purchase;
+ Name					   Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ID						    NUMBER(38)
+ ITEM						    VARCHAR2(20)
+ NOOFITEM					    NUMBER(38)
+ PRICE						    NUMBER(38)
+
+SQL> create table stock(item varchar(20),stock_available int);
+
+Table created.
+
+SQL> desc stock;
+ Name					   Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ITEM						    VARCHAR2(20)
+ STOCK_AVAILABLE				    NUMBER(38)
+
+SQL> insert into stock values('Book',100);
+
+1 row created.
+
+SQL> insert into stock values('Pen',100);
+
+1 row created.
+
+SQL> insert into stock values('Pencil',100);
+
+1 row created.
+
+SQL> select * from stock;
+
+ITEM		     STOCK_AVAILABLE
+-------------------- ---------------
+Book				 100
+Pen				 100
+Pencil				 100
+
+SQL> @t2.sql
+
+Warning: Trigger created with compilation errors.
+
+SQL> @t2.sql;
+
+Trigger created.
+
+SQL> insert into purchase values(01,'Book',3,60);
+
+1 row created.
+
+SQL> select * from stock;
+
+ITEM		     STOCK_AVAILABLE
+-------------------- ---------------
+Book				  97
+Pen				 100
+Pencil				 100
+
+SQL> p
+
